@@ -110,7 +110,7 @@
                 <option value="CN HòaTú">CN HòaTú</option>
                 <option value="CN Vinh Châu">CN Vinh Châu</option>
                 <option value="CN Gia Hoà">CN Gia Hoà</option>
-                <option value="CN Chợ Kinh">CN Chợ Kinh</option>
+                <option value="CN Gia Hoà">CN Chợ Kinh</option>
             </select>
         </form>
         <div class="wheel-container">
@@ -125,8 +125,8 @@
         </div>
     </div>
     <script>
-        let duration = 20;
-        let spins = 15;
+        let duration = 5;
+        let spins = 5;
         let startTime;
         let endTime;
         let isDragging = false;
@@ -190,7 +190,7 @@
             }
         }
 
-       function stopAngle() {
+        function stopAngle() {
     let probability = Math.random();
     let stopAt;
 
@@ -199,35 +199,35 @@
         let stop = Math.floor(Math.random() * 36);
         stopAt = start + stop;
     } else if (probability < 0.60) { // 10% chance for Segment 2
-        let start = 37;
+        let start = 36;
         let stop = Math.floor(Math.random() * 36);
         stopAt = start + stop;
     } else if (probability < 0.70) { // 10% chance for Segment 3
-        let start = 73;
+        let start = 72;
         let stop = Math.floor(Math.random() * 36);
         stopAt = start + stop;
     } else if (probability < 0.75) { // 5% chance for Segment 4
-        let start = 109;
+        let start = 108;
         let stop = Math.floor(Math.random() * 36);
         stopAt = start + stop;
     } else if (probability < 0.80) { // 5% chance for Segment 5
-        let start = 145;
+        let start = 144;
         let stop = Math.floor(Math.random() * 36);
         stopAt = start + stop;
     } else if (probability < 0.85) { // 5% chance for Segment 6
-        let start = 181;
+        let start = 180;
         let stop = Math.floor(Math.random() * 36);
         stopAt = start + stop;
     } else if (probability < 0.90) { // 5% chance for Segment 8
-        let start = 217;
+        let start = 252;
         let stop = Math.floor(Math.random() * 36);
         stopAt = start + stop;
     } else if (probability < 0.95) { // 5% chance for Segment 9
-        let start = 253;
+        let start = 288;
         let stop = Math.floor(Math.random() * 36);
         stopAt = start + stop;
     } else { // 5% chance for Segment 10
-        let start = 289;
+        let start = 324;
         let stop = Math.floor(Math.random() * 36);
         stopAt = start + stop;
     }
