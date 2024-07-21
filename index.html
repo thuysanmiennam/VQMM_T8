@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>HTML5 Canvas Winning Wheel</title>
+    <title>Vòng Quay May Mắn</title>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -110,8 +110,9 @@
                 <option value="CN HòaTú">CN HòaTú</option>
                 <option value="CN Vinh Châu">CN Vinh Châu</option>
                 <option value="CN Gia Hoà">CN Gia Hoà</option>
-                <option value="CN Gia Hoà">CN Chợ Kinh</option>
+                 <option value="CN Chợ Kinh">CN Chợ Kinh</option>
             </select>
+            <button type="submit" id="spin_start" class="btn">Quay ngay</button>
         </form>
         <div class="wheel-container">
             <img src="pointer.png" alt="Pointer" class="pointer" />
@@ -126,14 +127,9 @@
     </div>
     <script>
         let duration = 5;
-        let spins = 5;
-        let startTime;
-        let endTime;
-        let isDragging = false;
-        let lastAngle = 0;
-
+        let spins = 55;
         let theWheel = new Winwheel({
-            'numSegments': 10,
+            'numSegments': 8,
             'outerRadius': 212,
             'textFontSize': 18,
             'rotationAngle': 0,
@@ -166,19 +162,22 @@
 
         let audio = document.getElementById('backgroundAudio');
         let tickSound = new Audio('tick.mp3');
-        
+
         function playSound() {
             tickSound.pause();
             tickSound.currentTime = 0;
             tickSound.play();
         }
 
-        function startSpin() {
+        function startSpin(event) {
+            event.preventDefault();
+
             if (!wheelSpinning) {
                 const invoice = document.getElementById('invoice').value;
                 const store = document.getElementById('store').value;
 
                 if (invoice && invoice.length === 8 && store) {
+                    document.getElementById('spin_start').setAttribute("disabled", true);
                     stopAngle();
                     theWheel.startAnimation();
                     wheelSpinning = true;
@@ -188,53 +187,70 @@
                     alert("Vui lòng nhập hoá đơn mua hàng gồm 8 ký tự và chọn địa chỉ cửa hàng!");
                 }
             }
+
         }
 
         function stopAngle() {
     let probability = Math.random();
     let stopAt;
 
-    if (probability < 0.50) { // 50% chance for Segment 1
+    if (probability < 0.50) { // 50% cho phân đoạn 1
         let start = 0;
         let stop = Math.floor(Math.random() * 36);
         stopAt = start + stop;
-    } else if (probability < 0.60) { // 10% chance for Segment 2
+    } else if (probability < 0.60) { // 10% cho phân đoạn 2
         let start = 36;
         let stop = Math.floor(Math.random() * 36);
         stopAt = start + stop;
-    } else if (probability < 0.70) { // 10% chance for Segment 3
+    } else if (probability < 0.70) { // 10% cho phân đoạn 3
         let start = 72;
         let stop = Math.floor(Math.random() * 36);
         stopAt = start + stop;
-    } else if (probability < 0.75) { // 5% chance for Segment 4
+    } else if (probability < 0.75) { // 5% cho phân đoạn 4
         let start = 108;
         let stop = Math.floor(Math.random() * 36);
         stopAt = start + stop;
-    } else if (probability < 0.80) { // 5% chance for Segment 5
+    } else if (probability < 0.80) { // 5% cho phân đoạn 5
         let start = 144;
         let stop = Math.floor(Math.random() * 36);
         stopAt = start + stop;
-    } else if (probability < 0.85) { // 5% chance for Segment 6
+    } else if (probability < 0.85) { // 5% cho phân đoạn 6
         let start = 180;
         let stop = Math.floor(Math.random() * 36);
         stopAt = start + stop;
-    } else if (probability < 0.90) { // 5% chance for Segment 8
+    } else if (probability < 0.90) { // 5% cho phân đoạn 8
         let start = 252;
         let stop = Math.floor(Math.random() * 36);
         stopAt = start + stop;
-    } else if (probability < 0.95) { // 5% chance for Segment 9
+    } else if (probability < 0.95) { // 5% cho phân đoạn 9
         let start = 288;
         let stop = Math.floor(Math.random() * 36);
         stopAt = start + stop;
-    } else { // 5% chance for Segment 10
+    } else { // 5% cho phân đoạn 10
         let start = 324;
         let stop = Math.floor(Math.random() * 36);
         stopAt = start + stop;
     }
 
+    // Đảm bảo góc không rơi vào khoảng của phân đoạn 7
+    let segment7Start = 216;
+    let segment7End = 252;
+    if (stopAt >= segment7Start && stopAt < segment7End) {
+        // Nếu stopAt rơi vào khoảng của phân đoạn 7, đặt lại giá trị stopAt ngoài khoảng này
+        stopAt = (segment7End + 1 + Math.floor(Math.random() * (360 - segment7End - 1))) % 360;
+        // Nếu vẫn nằm trong khoảng, tiếp tục điều chỉnh
+        if (stopAt >= segment7Start && stopAt < segment7End) {
+            stopAt = (stopAt + segment7End - segment7Start + 1) % 360;
+        }
+    }
+
+    console.log('Adjusted stopAt:', stopAt);
+
     theWheel.animation.stopAngle = stopAt;
 }
-        function alertPrize(indicatedSegment) {
+
+
+function alertPrize(indicatedSegment) {
   const invoice = document.getElementById('invoice').value;
   const store = document.getElementById('store').value;
 
@@ -247,85 +263,6 @@
     })
     .catch(error => console.error('Error:', error));
 }
-
-        document.getElementById('canvas').addEventListener('mousedown', function(e) {
-            let wheelCanvas = document.getElementById('canvas');
-            let rect = wheelCanvas.getBoundingClientRect();
-            if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
-                isDragging = true;
-                lastAngle = e.clientX;
-            }
-        });
-
-        document.getElementById('canvas').addEventListener('mousemove', function(e) {
-            if (isDragging) {
-                let angle = e.clientX - lastAngle;
-                theWheel.rotationAngle += angle / 2;
-                theWheel.draw();
-                lastAngle = e.clientX;
-            }
-        });
-
-        document.getElementById('canvas').addEventListener('mouseup', function(e) {
-            let wheelCanvas = document.getElementById('canvas');
-            let rect = wheelCanvas.getBoundingClientRect();
-            if (isDragging && e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
-                isDragging = false;
-                startSpin();
-            } else {
-                isDragging = false;
-            }
-        });
-
-        document.getElementById('canvas').addEventListener('touchstart', function(e) {
-            let wheelCanvas = document.getElementById('canvas');
-            let rect = wheelCanvas.getBoundingClientRect();
-            if (e.touches[0].clientX >= rect.left && e.touches[0].clientX <= rect.right && e.touches[0].clientY >= rect.top && e.touches[0].clientY <= rect.bottom) {
-                isDragging = true;
-                lastAngle = e.touches[0].clientX;
-            }
-        });
-
-        document.getElementById('canvas').addEventListener('touchmove', function(e) {
-            if (isDragging) {
-                let angle = e.touches[0].clientX - lastAngle;
-                theWheel.rotationAngle += angle / 2;
-                theWheel.draw();
-                lastAngle = e.touches[0].clientX;
-            }
-        });
-
-        document.getElementById('canvas').addEventListener('touchend', function(e) {
-            let wheelCanvas = document.getElementById('canvas');
-            let rect = wheelCanvas.getBoundingClientRect();
-            if (isDragging && e.changedTouches[0].clientX >= rect.left && e.changedTouches[0].clientX <= rect.right && e.changedTouches[0].clientY >= rect.top && e.changedTouches[0].clientY <= rect.bottom) {
-                isDragging = false;
-                startSpin();
-            } else {
-                isDragging = false;
-            }
-        });
-
-        // Prevent default scrolling behavior for canvas only
-        document.getElementById('canvas').addEventListener('scroll', function(event) {
-            event.preventDefault();
-        });
-
-        document.getElementById('canvas').addEventListener('touchmove', function(event) {
-            event.preventDefault();
-        }, { passive: false });
-
-        document.getElementById('canvas').addEventListener('mousemove', function(event) {
-            event.preventDefault();
-        });
-
-        document.getElementById('canvas').addEventListener('mousedown', function(event) {
-            event.preventDefault();
-        });
-
-        document.getElementById('canvas').addEventListener('mouseup', function(event) {
-            event.preventDefault();
-        });
     </script>
 </body>
 </html>
