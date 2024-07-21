@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>HTML5 Canvas Winning Wheel</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <link rel="stylesheet" href="main.css" type="text/css" />
+    <link type="icon/x-icon" href="favicon.ico" rel="shortcut icon" />
+    <script type="text/javascript" src="Winwheel.min.js"></script>
+    <script src="TweenMax.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('hinhnen-pc.png') no-repeat center center fixed;
+            background-size: cover;
+        }
+
+        /* Media query for tablets and small desktops */
+        @media only screen and (max-width: 1200px) {
+            body {
+                background: url('hinhnen-tablet.png') no-repeat center center fixed;
+                background-size: cover;
+            }
+        }
+
+        /* Media query for mobile devices */
+        @media only screen and (max-width: 768px) {
+            body {
+                background: url('hinhnen-mobile.png') no-repeat center center fixed;
+                background-size: cover;
+            }
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 10px;
+        }
+        #userForm {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 25px;
+            background: rgba(255, 255, 255, 0.8);
+            padding: 10px;
+            border-radius: 10px;
+        }
+        .wheel-container {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        canvas {
+            max-width: 100%;
+            height: auto;
+        }
+        .pointer {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 35px;
+            height: 50px;
+            transform: translateX(-50%);
+            z-index: 1;
+        }
+        .btn {
+            padding: 10px;
+            font-size: 14px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+        input[type="text"], select {
+            width: 150px;
+            padding: 1px;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+        .info-text {
+            font-size: 16px;
+            font-weight: bold;
+            color: #333;
+            margin-top: 10px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <form id="userForm" onsubmit="startSpin(event);">
+            <input type="text" id="invoice" name="invoice" placeholder="Hoá Đơn Mua Hàng" required minlength="8" maxlength="8" pattern=".{8}" title="Hoá đơn mua hàng phải có 8 ký tự">
+            <select id="store" name="store" required>
+                <option value="" disabled selected>Chọn Địa Chỉ Cửa Hàng</option>
+                <option value="CN Vĩnh Trạch">CN Vĩnh Trạch</option>
+                <option value="CN Cù Lao Dung">CN Cù Lao Dung</option>
+                <option value="CN Lai Hoà">CN Lai Hoà</option>
+                <option value="CN Vinh Phước">CN Vinh Phước</option>
+                <option value="CN Khánh Hoà">CN Khánh Hoà</option>
+                <option value="CN HòaTú">CN HòaTú</option>
+                <option value="CN Vinh Châu">CN Vinh Châu</option>
+                <option value="CN Gia Hoà">CN Gia Hoà</option>
+                <option value="CN Gia Hoà">CN Chợ Kinh</option>
+            </select>
+        </form>
+        <div class="wheel-container">
+            <img src="pointer.png" alt="Pointer" class="pointer" />
+            <canvas id="canvas" width="434" height="434">
+                <p style="color: white" align="center">Sorry, your browser doesn't support canvas. Please try another.</p>
+            </canvas>
+            <audio id="backgroundAudio">
+                <source src="background.mp3" type="audio/mpeg">
+                <source src="background.mp3" type="audio/wav">
+            </audio>
+        </div>
+    </div>
+    <script>
+        let duration = 20;
+        let spins = 15;
+        let startTime;
+        let endTime;
+        let isDragging = false;
+        let lastAngle = 0;
+
+        let theWheel = new Winwheel({
+            'numSegments': 10,
+            'outerRadius': 212,
+            'textFontSize': 18,
+            'rotationAngle': 0,
+            'segments': [
+                {'fillStyle': '#ffffff', 'text': 'SULFATRIME'},
+                {'fillStyle': '#fb6700', 'text': 'ÁO MƯA'},
+                {'fillStyle': '#ffffff', 'text': 'AQUA YUCCA ZEO C'},
+                {'fillStyle': '#fb6700', 'text': 'BZT DIGESTER'},
+                {'fillStyle': '#ffffff', 'text': 'C PLUS'},
+                {'fillStyle': '#fb6700', 'text': 'PREMIX 9999'},
+                {'fillStyle': '#ffffff', 'text': 'POND BACILUSS'},
+                {'fillStyle': '#fb6700', 'text': 'SCANVIRON'},
+                {'fillStyle': '#ffffff', 'text': 'AQUA BZT (227g)'},
+                {'fillStyle': '#fb6700', 'text': 'EDTA THIO 2X'},
+            ],
+            'animation': {
+                'type': 'spinToStop',
+                'duration': duration,
+                'spins': spins,
+                'callbackSound': playSound,
+                'soundTrigger': 'pin',
+                'callbackFinished': alertPrize,
+            },
+            'pins': {
+                'number': 32
+            }
+        });
+
+        let wheelSpinning = false;
+
+        let audio = document.getElementById('backgroundAudio');
+        let tickSound = new Audio('tick.mp3');
+        
+        function playSound() {
+            tickSound.pause();
+            tickSound.currentTime = 0;
+            tickSound.play();
+        }
+
+        function startSpin() {
+            if (!wheelSpinning) {
+                const invoice = document.getElementById('invoice').value;
+                const store = document.getElementById('store').value;
+
+                if (invoice && invoice.length === 8 && store) {
+                    stopAngle();
+                    theWheel.startAnimation();
+                    wheelSpinning = true;
+                    // Play background audio
+                    audio.play();
+                } else {
+                    alert("Vui lòng nhập hoá đơn mua hàng gồm 8 ký tự và chọn địa chỉ cửa hàng!");
+                }
+            }
+        }
+
+        function stopAngle() {
+            let probability = Math.random();
+            let stopAt;
+
+            if (probability < 0.50) { // 50% chance
+                let start = 0;
+                let stop = Math.floor(Math.random() * 36);
+                stopAt = start + stop;
+            } else if (probability < 0.60) { // 10% chance
+                let start = 37;
+                let stop = Math.floor(Math.random() * 36);
+                stopAt = start + stop;
+            } else if (probability < 0.70) { // 10% chance
+                let start = 73;
+                let stop = Math.floor(Math.random() * 36);
+                stopAt = start + stop;
+            } else if (probability < 0.75) { // 5% chance
+                let start = 109;
+                let stop = Math.floor(Math.random() * 36);
+                stopAt = start + stop;
+            } else if (probability < 0.80) { // 5% chance
+                let start = 145;
+                let stop = Math.floor(Math.random() * 36);
+                stopAt = start + stop;
+            } else if (probability < 0.85) { // 5% chance
+                let start = 181;
+                let stop = Math.floor(Math.random() * 36);
+                stopAt = start + stop;
+            } else if (probability < 0.90) { // 5% chance
+                let start = 217;
+                let stop = Math.floor(Math.random() * 36);
+                stopAt = start + stop;
+            } else if (probability < 0.95) { // 5% chance
+                let start = 253;
+                let stop = Math.floor(Math.random() * 36);
+                stopAt = start + stop;
+            } else { // 5% chance
+                let start = 289;
+                let stop = Math.floor(Math.random() * 36);
+                stopAt = start + stop;
+            }
+
+            theWheel.animation.stopAngle = stopAt;
+        }
+
+        function alertPrize(indicatedSegment) {
+  const invoice = document.getElementById('invoice').value;
+  const store = document.getElementById('store').value;
+
+  fetch('https://script.google.com/macros/s/AKfycbwzx4tw7B3QfVvWlnLl2AK4pl-mtmXSNdotidWDs2fOAGvE9dqcmziEGHJ2jHQRdbCI/exec' + '?invoice=' + invoice + '&store=' + store + '&indicatedSegment=' + encodeURIComponent(indicatedSegment.text))
+    .then(response => response.text())
+    .then(data => {
+      console.log(data);
+      alert("Bạn đã trúng: " + indicatedSegment.text);
+      wheelSpinning = false;
+    })
+    .catch(error => console.error('Error:', error));
+}
+
+        document.getElementById('canvas').addEventListener('mousedown', function(e) {
+            let wheelCanvas = document.getElementById('canvas');
+            let rect = wheelCanvas.getBoundingClientRect();
+            if (e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
+                isDragging = true;
+                lastAngle = e.clientX;
+            }
+        });
+
+        document.getElementById('canvas').addEventListener('mousemove', function(e) {
+            if (isDragging) {
+                let angle = e.clientX - lastAngle;
+                theWheel.rotationAngle += angle / 2;
+                theWheel.draw();
+                lastAngle = e.clientX;
+            }
+        });
+
+        document.getElementById('canvas').addEventListener('mouseup', function(e) {
+            let wheelCanvas = document.getElementById('canvas');
+            let rect = wheelCanvas.getBoundingClientRect();
+            if (isDragging && e.clientX >= rect.left && e.clientX <= rect.right && e.clientY >= rect.top && e.clientY <= rect.bottom) {
+                isDragging = false;
+                startSpin();
+            } else {
+                isDragging = false;
+            }
+        });
+
+        document.getElementById('canvas').addEventListener('touchstart', function(e) {
+            let wheelCanvas = document.getElementById('canvas');
+            let rect = wheelCanvas.getBoundingClientRect();
+            if (e.touches[0].clientX >= rect.left && e.touches[0].clientX <= rect.right && e.touches[0].clientY >= rect.top && e.touches[0].clientY <= rect.bottom) {
+                isDragging = true;
+                lastAngle = e.touches[0].clientX;
+            }
+        });
+
+        document.getElementById('canvas').addEventListener('touchmove', function(e) {
+            if (isDragging) {
+                let angle = e.touches[0].clientX - lastAngle;
+                theWheel.rotationAngle += angle / 2;
+                theWheel.draw();
+                lastAngle = e.touches[0].clientX;
+            }
+        });
+
+        document.getElementById('canvas').addEventListener('touchend', function(e) {
+            let wheelCanvas = document.getElementById('canvas');
+            let rect = wheelCanvas.getBoundingClientRect();
+            if (isDragging && e.changedTouches[0].clientX >= rect.left && e.changedTouches[0].clientX <= rect.right && e.changedTouches[0].clientY >= rect.top && e.changedTouches[0].clientY <= rect.bottom) {
+                isDragging = false;
+                startSpin();
+            } else {
+                isDragging = false;
+            }
+        });
+
+        // Prevent default scrolling behavior for canvas only
+        document.getElementById('canvas').addEventListener('scroll', function(event) {
+            event.preventDefault();
+        });
+
+        document.getElementById('canvas').addEventListener('touchmove', function(event) {
+            event.preventDefault();
+        }, { passive: false });
+
+        document.getElementById('canvas').addEventListener('mousemove', function(event) {
+            event.preventDefault();
+        });
+
+        document.getElementById('canvas').addEventListener('mousedown', function(event) {
+            event.preventDefault();
+        });
+
+        document.getElementById('canvas').addEventListener('mouseup', function(event) {
+            event.preventDefault();
+        });
+    </script>
+</body>
+</html>
