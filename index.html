@@ -129,21 +129,21 @@
         let duration = 5;
         let spins = 55;
         let theWheel = new Winwheel({
-            'numSegments': 8,
+            'numSegments': 10,  // Số ô được chia thành 10
             'outerRadius': 212,
             'textFontSize': 18,
             'rotationAngle': 0,
             'segments': [
-                {'fillStyle': '#ffffff', 'text': 'SULFATRIME'},
-                {'fillStyle': '#fb6700', 'text': 'ÁO MƯA'},
-                {'fillStyle': '#ffffff', 'text': 'AQUA YUCCA ZEO C'},
-                {'fillStyle': '#fb6700', 'text': 'BZT DIGESTER'},
-                {'fillStyle': '#ffffff', 'text': 'C PLUS'},
-                {'fillStyle': '#fb6700', 'text': 'PREMIX 9999'},
-                {'fillStyle': '#ffffff', 'text': 'POND BACILUSS'},
-                {'fillStyle': '#fb6700', 'text': 'SCANVIRON'},
-                {'fillStyle': '#ffffff', 'text': 'AQUA BZT (227g)'},
-                {'fillStyle': '#fb6700', 'text': 'EDTA THIO 2X'},
+                {'fillStyle': '#ffffff', 'text': 'SULFATRIME'},        // Ô 1
+                {'fillStyle': '#fb6700', 'text': 'ÁO MƯA'},            // Ô 2
+                {'fillStyle': '#ffffff', 'text': 'AQUA YUCCA ZEO C'},  // Ô 3
+                {'fillStyle': '#fb6700', 'text': 'BZT DIGESTER'},      // Ô 4
+                {'fillStyle': '#ffffff', 'text': 'C PLUS'},            // Ô 5
+                {'fillStyle': '#fb6700', 'text': 'PREMIX 9999'},       // Ô 6
+                {'fillStyle': '#ffffff', 'text': 'POND BACILUSS'},     // Ô 7
+                {'fillStyle': '#fb6700', 'text': 'SCANVIRON'},         // Ô 8
+                {'fillStyle': '#ffffff', 'text': 'AQUA BZT (227g)'},   // Ô 9
+                {'fillStyle': '#fb6700', 'text': 'EDTA THIO 2X'},      // Ô 10
             ],
             'animation': {
                 'type': 'spinToStop',
@@ -191,78 +191,71 @@
         }
 
         function stopAngle() {
-    let probability = Math.random();
-    let stopAt;
+            let probability = Math.random();
+            let stopAt;
 
-    if (probability < 0.50) { // 50% cho phân đoạn 1
-        let start = 0;
-        let stop = Math.floor(Math.random() * 36);
-        stopAt = start + stop;
-    } else if (probability < 0.60) { // 10% cho phân đoạn 2
-        let start = 36;
-        let stop = Math.floor(Math.random() * 36);
-        stopAt = start + stop;
-    } else if (probability < 0.70) { // 10% cho phân đoạn 3
-        let start = 72;
-        let stop = Math.floor(Math.random() * 36);
-        stopAt = start + stop;
-    } else if (probability < 0.75) { // 5% cho phân đoạn 4
-        let start = 108;
-        let stop = Math.floor(Math.random() * 36);
-        stopAt = start + stop;
-    } else if (probability < 0.80) { // 5% cho phân đoạn 5
-        let start = 144;
-        let stop = Math.floor(Math.random() * 36);
-        stopAt = start + stop;
-    } else if (probability < 0.85) { // 5% cho phân đoạn 6
-        let start = 180;
-        let stop = Math.floor(Math.random() * 36);
-        stopAt = start + stop;
-    } else if (probability < 0.90) { // 5% cho phân đoạn 8
-        let start = 252;
-        let stop = Math.floor(Math.random() * 36);
-        stopAt = start + stop;
-    } else if (probability < 0.95) { // 5% cho phân đoạn 9
-        let start = 288;
-        let stop = Math.floor(Math.random() * 36);
-        stopAt = start + stop;
-    } else { // 5% cho phân đoạn 10
-        let start = 324;
-        let stop = Math.floor(Math.random() * 36);
-        stopAt = start + stop;
-    }
+            // Chia góc thành các phần tương ứng với xác suất
+            if (probability < 0.50) { // 50% cho ô 1
+                let start = 0;
+                let stop = Math.floor(Math.random() * 36);
+                stopAt = start + stop;
+            } else if (probability < 0.60) { // 10% cho ô 2
+                let start = 36;
+                let stop = Math.floor(Math.random() * 36);
+                stopAt = start + stop;
+            } else if (probability < 0.70) { // 10% cho ô 3
+                let start = 72;
+                let stop = Math.floor(Math.random() * 36);
+                stopAt = start + stop;
+            } else if (probability < 0.75) { // 5% cho ô 4
+                let start = 108;
+                let stop = Math.floor(Math.random() * 36);
+                stopAt = start + stop;
+            } else if (probability < 0.80) { // 5% cho ô 5
+                let start = 144;
+                let stop = Math.floor(Math.random() * 36);
+                stopAt = start + stop;
+            } else if (probability < 0.85) { // 5% cho ô 6
+                let start = 180;
+                let stop = Math.floor(Math.random() * 36);
+                stopAt = start + stop;
+            } else if (probability < 0.90) { // 5% cho ô 8
+                let start = 252;
+                let stop = Math.floor(Math.random() * 36);
+                stopAt = start + stop;
+            } else if (probability < 0.95) { // 5% cho ô 9
+                let start = 288;
+                let stop = Math.floor(Math.random() * 36);
+                stopAt = start + stop;
+            } else { // 5% cho ô 10
+                let start = 324;
+                let stop = Math.floor(Math.random() * 36);
+                stopAt = start + stop;
+            }
 
-    // Đảm bảo góc không rơi vào khoảng của phân đoạn 7
-    let segment7Start = 216;
-    let segment7End = 252;
-    if (stopAt >= segment7Start && stopAt < segment7End) {
-        // Nếu stopAt rơi vào khoảng của phân đoạn 7, đặt lại giá trị stopAt ngoài khoảng này
-        stopAt = (segment7End + 1 + Math.floor(Math.random() * (360 - segment7End - 1))) % 360;
-        // Nếu vẫn nằm trong khoảng, tiếp tục điều chỉnh
-        if (stopAt >= segment7Start && stopAt < segment7End) {
-            stopAt = (stopAt + segment7End - segment7Start + 1) % 360;
+            // Đảm bảo góc không rơi vào khoảng của ô 7 (216 đến 252 độ)
+            let segment7Start = 216;
+            let segment7End = 252;
+            if (stopAt >= segment7Start && stopAt < segment7End) {
+                stopAt = (segment7End + 1 + Math.floor(Math.random() * (360 - segment7End))) % 360;
+            }
+
+            theWheel.animation.stopAngle = stopAt;
         }
-    }
 
-    console.log('Adjusted stopAt:', stopAt);
+        function alertPrize(indicatedSegment) {
+            const invoice = document.getElementById('invoice').value;
+            const store = document.getElementById('store').value;
 
-    theWheel.animation.stopAngle = stopAt;
-}
-
-
-function alertPrize(indicatedSegment) {
-  const invoice = document.getElementById('invoice').value;
-  const store = document.getElementById('store').value;
-
-  fetch('https://script.google.com/macros/s/AKfycbwzx4tw7B3QfVvWlnLl2AK4pl-mtmXSNdotidWDs2fOAGvE9dqcmziEGHJ2jHQRdbCI/exec' + '?invoice=' + invoice + '&store=' + store + '&indicatedSegment=' + encodeURIComponent(indicatedSegment.text))
-    .then(response => response.text())
-    .then(data => {
-      console.log(data);
-      alert("Bạn đã trúng: " + indicatedSegment.text);
-      wheelSpinning = false;
-    })
-    .catch(error => console.error('Error:', error));
-}
+            fetch('https://script.google.com/macros/s/AKfycbwzx4tw7B3QfVvWlnLl2AK4pl-mtmXSNdotidWDs2fOAGvE9dqcmziEGHJ2jHQRdbCI/exec' + '?invoice=' + invoice + '&store=' + store + '&indicatedSegment=' + encodeURIComponent(indicatedSegment.text))
+                .then(response => response.text())
+                .then(data => {
+                    console.log(data);
+                    alert("Bạn đã trúng: " + indicatedSegment.text);
+                    wheelSpinning = false;
+                })
+                .catch(error => console.error('Error:', error));
+        }
     </script>
 </body>
 </html>
