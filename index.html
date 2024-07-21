@@ -190,51 +190,50 @@
             }
         }
 
-        function stopAngle() {
-            let probability = Math.random();
-            let stopAt;
+       function stopAngle() {
+    let probability = Math.random();
+    let stopAt;
 
-            if (probability < 0.50) { // 50% chance
-                let start = 0;
-                let stop = Math.floor(Math.random() * 36);
-                stopAt = start + stop;
-            } else if (probability < 0.60) { // 10% chance
-                let start = 37;
-                let stop = Math.floor(Math.random() * 36);
-                stopAt = start + stop;
-            } else if (probability < 0.70) { // 10% chance
-                let start = 73;
-                let stop = Math.floor(Math.random() * 36);
-                stopAt = start + stop;
-            } else if (probability < 0.75) { // 5% chance
-                let start = 109;
-                let stop = Math.floor(Math.random() * 36);
-                stopAt = start + stop;
-            } else if (probability < 0.80) { // 5% chance
-                let start = 145;
-                let stop = Math.floor(Math.random() * 36);
-                stopAt = start + stop;
-            } else if (probability < 0.85) { // 5% chance
-                let start = 181;
-                let stop = Math.floor(Math.random() * 36);
-                stopAt = start + stop;
-            } else if (probability < 0.90) { // 5% chance
-                let start = 217;
-                let stop = Math.floor(Math.random() * 36);
-                stopAt = start + stop;
-            } else if (probability < 0.95) { // 5% chance
-                let start = 253;
-                let stop = Math.floor(Math.random() * 36);
-                stopAt = start + stop;
-            } else { // 5% chance
-                let start = 289;
-                let stop = Math.floor(Math.random() * 36);
-                stopAt = start + stop;
-            }
+    if (probability < 0.50) { // 50% chance for Segment 1
+        let start = 0;
+        let stop = Math.floor(Math.random() * 36);
+        stopAt = start + stop;
+    } else if (probability < 0.60) { // 10% chance for Segment 2
+        let start = 37;
+        let stop = Math.floor(Math.random() * 36);
+        stopAt = start + stop;
+    } else if (probability < 0.70) { // 10% chance for Segment 3
+        let start = 73;
+        let stop = Math.floor(Math.random() * 36);
+        stopAt = start + stop;
+    } else if (probability < 0.75) { // 5% chance for Segment 4
+        let start = 109;
+        let stop = Math.floor(Math.random() * 36);
+        stopAt = start + stop;
+    } else if (probability < 0.80) { // 5% chance for Segment 5
+        let start = 145;
+        let stop = Math.floor(Math.random() * 36);
+        stopAt = start + stop;
+    } else if (probability < 0.85) { // 5% chance for Segment 6
+        let start = 181;
+        let stop = Math.floor(Math.random() * 36);
+        stopAt = start + stop;
+    } else if (probability < 0.90) { // 5% chance for Segment 8
+        let start = 217;
+        let stop = Math.floor(Math.random() * 36);
+        stopAt = start + stop;
+    } else if (probability < 0.95) { // 5% chance for Segment 9
+        let start = 253;
+        let stop = Math.floor(Math.random() * 36);
+        stopAt = start + stop;
+    } else { // 5% chance for Segment 10
+        let start = 289;
+        let stop = Math.floor(Math.random() * 36);
+        stopAt = start + stop;
+    }
 
-            theWheel.animation.stopAngle = stopAt;
-        }
-
+    theWheel.animation.stopAngle = stopAt;
+}
         function alertPrize(indicatedSegment) {
   const invoice = document.getElementById('invoice').value;
   const store = document.getElementById('store').value;
