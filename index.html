@@ -192,18 +192,19 @@
 
         function stopAngle() {
     // Các phân đoạn và góc bắt đầu, kết thúc
-    const segments = [
-        {start: 0, end: 35, name: 'SULFATRIME', probability: 0.50},
-        {start: 36, end: 71, name: 'ÁO MƯA', probability: 0.10},
-        {start: 72, end: 107, name: 'AQUA YUCCA ZEO C', probability: 0.10},
-        {start: 108, end: 143, name: 'BZT DIGESTER', probability: 0.05},
-        {start: 144, end: 179, name: 'C PLUS', probability: 0.05},
-        {start: 180, end: 215, name: 'PREMIX 9999', probability: 0.05},
-        {start: 216, end: 251, name: 'POND BACILUSS', probability: 0},
-        {start: 252, end: 287, name: 'SCANVIRON', probability: 0.05},
-        {start: 288, end: 323, name: 'AQUA BZT (227g)', probability: 0.05},
-        {start: 324, end: 359, name: 'EDTA THIO 2X', probability: 0.05}
-    ];
+  const segments = [
+    {start: 0, end: 35, name: 'SULFATRIME', probability: 0.25},
+    {start: 36, end: 71, name: 'ÁO MƯA', probability: 0.10},
+    {start: 72, end: 107, name: 'AQUA YUCCA ZEO C', probability: 0.10},
+    {start: 108, end: 143, name: 'BZT DIGESTER', probability: 0.05},
+    {start: 144, end: 179, name: 'C PLUS', probability: 0.05},
+    {start: 180, end: 215, name: 'PREMIX 9999', probability: 0.30},
+    {start: 216, end: 251, name: 'POND BACILUSS', probability: 0},
+    {start: 252, end: 287, name: 'SCANVIRON', probability: 0.05},
+    {start: 288, end: 323, name: 'AQUA BZT (227g)', probability: 0.05},
+    {start: 324, end: 359, name: 'EDTA THIO 2X', probability: 0.05}
+];
+
 
     let probability = Math.random();
     let cumulativeProbability = 0;
